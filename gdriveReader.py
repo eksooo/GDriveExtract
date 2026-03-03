@@ -27,12 +27,10 @@ def get_credentials():
 
     return creds
 
-
-# ✅ CREATE service (this was missing)
 creds = get_credentials()
 service = build('drive', 'v3', credentials=creds)
 
-FOLDER_ID = '1DOoVjHHNeP0tebbWt1obnUjLO5Argnqy'
+FOLDER_ID = 'FOLDER ID HERE'
 
 
 def process_folder_files(service, folder_id):
@@ -56,7 +54,6 @@ def process_folder_files(service, folder_id):
             file_id = file['id']
             name = file['name']
 
-            # Check if already public
             has_public = any(
                 p.get('type') == 'anyone' and p.get('role') == 'reader'
                 for p in file.get('permissions', [])
@@ -73,7 +70,6 @@ def process_folder_files(service, folder_id):
                 ).execute()
                 print(f"Added public access: {name}")
 
-            # Fetch (or refresh) the shareable link
             file_data = service.files().get(
                 fileId=file_id,
                 fields='webViewLink'
@@ -96,5 +92,6 @@ def process_folder_files(service, folder_id):
 files = process_folder_files(service, FOLDER_ID)
 
 for f in files:
+    print(f"Name: {f['name']}")
     print(f"Link: {f['link']}")
     print("-" * 40)
